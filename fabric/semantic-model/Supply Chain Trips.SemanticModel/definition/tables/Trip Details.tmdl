@@ -1,0 +1,40 @@
+/// Low-cardinality trip attributes (junk dimension): booking type, GPS provider and delivery status.
+table 'Trip Details'
+
+	column 'Trip Details Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: trip_attributes_key
+
+	/// Regular (contracted) or Market (spot) booking.
+	column 'Booking Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: booking_type
+
+	/// Telematics provider that tracked the trip; NOT TRACKED when none.
+	column 'GPS Provider'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: gps_provider
+
+	/// On Time (ontime = G), Delayed (delay = R) or Unknown when the source has neither flag.
+	column 'Delivery Status'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: delivery_status
+
+	/// True when the trip had a GPS provider.
+	column 'Is GPS Tracked'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_gps_tracked
+
+	partition 'Trip Details' = entity
+		mode: directLake
+		source
+			entityName: dim_trip_attributes
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

@@ -1,0 +1,6 @@
+/// OneLake connection to the Gold lakehouse (lh_gold) used by every Direct Lake table.
+expression 'DirectLake - Gold' =
+		let
+			Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/{{WORKSPACE_ID}}/{{GOLD_LAKEHOUSE_ID}}", [HierarchicalNavigation=true])
+		in
+			Source

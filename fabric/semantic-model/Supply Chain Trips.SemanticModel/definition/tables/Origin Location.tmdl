@@ -1,0 +1,75 @@
+/// Origin of the trip (role-playing copy of the conformed location dimension). Unknown member key -1.
+table 'Origin Location'
+
+	column 'Origin Location Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: location_key
+
+	/// Full origin location as recorded: place, city, state.
+	column 'Origin Location'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: location_name
+
+	/// Source system code for the origin location.
+	column 'Origin Location Code'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: location_code
+
+	/// Site or locality within the city.
+	column 'Origin Place'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: place
+
+	/// Origin city or district.
+	column 'Origin City'
+		dataType: string
+		dataCategory: City
+		summarizeBy: none
+		sourceColumn: city
+
+	/// Origin state or union territory (India).
+	column 'Origin State'
+		dataType: string
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: state
+
+	/// Origin latitude (WGS84).
+	column 'Origin Latitude'
+		dataType: decimal
+		formatString: 0.0000
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: latitude
+
+	/// Origin longitude (WGS84).
+	column 'Origin Longitude'
+		dataType: decimal
+		formatString: 0.0000
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: longitude
+
+	hierarchy 'Origin Geography'
+
+		level State
+			column: 'Origin State'
+
+		level City
+			column: 'Origin City'
+
+		level Location
+			column: 'Origin Location'
+
+	partition 'Origin Location' = entity
+		mode: directLake
+		source
+			entityName: dim_origin_location
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

@@ -1,0 +1,136 @@
+/// Calendar dimension (one row per day, contiguous full years). Role-plays trip start (active), booking and trip end dates.
+table Date
+	dataCategory: Time
+
+	column 'Date Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: date_key
+
+	/// Calendar date.
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: dd mmm yyyy
+		summarizeBy: none
+		sourceColumn: date
+
+	/// Calendar year.
+	column Year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column 'Quarter Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: quarter_number
+
+	/// Calendar quarter (Q1-Q4).
+	column Quarter
+		dataType: string
+		summarizeBy: none
+		sourceColumn: quarter
+		sortByColumn: 'Quarter Number'
+
+	column 'Year Quarter Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year_quarter_number
+
+	/// Year and quarter, e.g. 2020 Q3.
+	column 'Year Quarter'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: year_quarter
+		sortByColumn: 'Year Quarter Number'
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: month_number
+
+	/// Month name, sorted chronologically.
+	column Month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: 'Month Number'
+
+	column 'Year Month Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year_month_number
+
+	/// Month and year, e.g. Aug 2020; use on trend axes.
+	column 'Year Month'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: year_month
+		sortByColumn: 'Year Month Number'
+
+	/// ISO week number.
+	column 'Week of Year'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: week_of_year
+
+	/// Day number within the month.
+	column 'Day of Month'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: day_of_month
+
+	column 'Day of Week Number'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: day_of_week_number
+
+	/// Weekday name, Monday first.
+	column 'Day of Week'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: day_name
+		sortByColumn: 'Day of Week Number'
+
+	/// True for Saturday and Sunday.
+	column 'Is Weekend'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+	hierarchy Calendar
+
+		level Year
+			column: Year
+
+		level Quarter
+			column: Quarter
+
+		level Month
+			column: Month
+
+		level Date
+			column: Date
+
+	partition Date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

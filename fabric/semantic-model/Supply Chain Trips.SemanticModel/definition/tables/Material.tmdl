@@ -1,0 +1,22 @@
+/// Material or part shipped on the trip. Unknown member key -1.
+table Material
+
+	column 'Material Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: material_key
+
+	/// Material description as recorded.
+	column 'Material Shipped'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: material_shipped
+
+	partition Material = entity
+		mode: directLake
+		source
+			entityName: dim_material
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

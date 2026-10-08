@@ -1,0 +1,56 @@
+/// Truck body / capacity type booked for the trip. Unknown member key -1.
+table 'Vehicle Type'
+
+	column 'Vehicle Type Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: vehicle_type_key
+
+	/// Vehicle type as booked, e.g. 40 FT 3XL Trailer 35MT.
+	column 'Vehicle Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicle_type
+
+	/// Payload capacity in metric tonnes (MT), parsed from the type name.
+	column 'Capacity (MT)'
+		dataType: decimal
+		formatString: #,##0.0
+		summarizeBy: none
+		sourceColumn: capacity_mt
+
+	/// Body length in feet, parsed from the type name.
+	column 'Length (ft)'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: length_ft
+
+	/// Size class: LCV (light), MCV (medium), HCV (heavy commercial vehicle) or Trailer.
+	column 'Vehicle Class'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicle_class
+
+	/// Body style: Open, Closed / Container, Flat Bed, Trailer.
+	column 'Body Style'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: body_style
+
+	hierarchy 'Vehicle Classification'
+
+		level Class
+			column: 'Vehicle Class'
+
+		level Type
+			column: 'Vehicle Type'
+
+	partition 'Vehicle Type' = entity
+		mode: directLake
+		source
+			entityName: dim_vehicle_type
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

@@ -1,0 +1,49 @@
+relationship 'Trips to Date (Trip Start)'
+	fromColumn: Trips.'Trip Start Date Key'
+	toColumn: Date.'Date Key'
+
+relationship 'Trips to Date (Booking)'
+	isActive: false
+	fromColumn: Trips.'Booking Date Key'
+	toColumn: Date.'Date Key'
+
+relationship 'Trips to Date (Trip End)'
+	isActive: false
+	fromColumn: Trips.'Trip End Date Key'
+	toColumn: Date.'Date Key'
+
+relationship 'Trips to Origin Location'
+	fromColumn: Trips.'Origin Location Key'
+	toColumn: 'Origin Location'.'Origin Location Key'
+
+relationship 'Trips to Destination Location'
+	fromColumn: Trips.'Destination Location Key'
+	toColumn: 'Destination Location'.'Destination Location Key'
+
+relationship 'Trips to Vehicle'
+	fromColumn: Trips.'Vehicle Key'
+	toColumn: Vehicle.'Vehicle Key'
+
+relationship 'Trips to Vehicle Type'
+	fromColumn: Trips.'Vehicle Type Key'
+	toColumn: 'Vehicle Type'.'Vehicle Type Key'
+
+relationship 'Trips to Customer'
+	fromColumn: Trips.'Customer Key'
+	toColumn: Customer.'Customer Key'
+
+relationship 'Trips to Carrier'
+	fromColumn: Trips.'Carrier Key'
+	toColumn: Carrier.'Carrier Key'
+
+relationship 'Trips to Driver'
+	fromColumn: Trips.'Driver Key'
+	toColumn: Driver.'Driver Key'
+
+relationship 'Trips to Material'
+	fromColumn: Trips.'Material Key'
+	toColumn: Material.'Material Key'
+
+relationship 'Trips to Trip Details'
+	fromColumn: Trips.'Trip Details Key'
+	toColumn: 'Trip Details'.'Trip Details Key'

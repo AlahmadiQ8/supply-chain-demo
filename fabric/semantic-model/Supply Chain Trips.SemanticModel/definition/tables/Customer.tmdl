@@ -1,0 +1,28 @@
+/// Shipper (customer) that booked the trip. Unknown member key -1.
+table Customer
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: customer_key
+
+	/// Customer code in the source system.
+	column 'Customer ID'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_id
+
+	/// Customer name.
+	column Customer
+		dataType: string
+		summarizeBy: none
+		sourceColumn: customer_name
+
+	partition Customer = entity
+		mode: directLake
+		source
+			entityName: dim_customer
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

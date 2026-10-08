@@ -1,0 +1,75 @@
+/// Destination of the trip (role-playing copy of the conformed location dimension). Unknown member key -1.
+table 'Destination Location'
+
+	column 'Destination Location Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: location_key
+
+	/// Full destination location as recorded: place, city, state.
+	column 'Destination Location'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: location_name
+
+	/// Source system code for the destination location.
+	column 'Destination Location Code'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: location_code
+
+	/// Site or locality within the city.
+	column 'Destination Place'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: place
+
+	/// Destination city or district.
+	column 'Destination City'
+		dataType: string
+		dataCategory: City
+		summarizeBy: none
+		sourceColumn: city
+
+	/// Destination state or union territory (India).
+	column 'Destination State'
+		dataType: string
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: state
+
+	/// Destination latitude (WGS84).
+	column 'Destination Latitude'
+		dataType: decimal
+		formatString: 0.0000
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: latitude
+
+	/// Destination longitude (WGS84).
+	column 'Destination Longitude'
+		dataType: decimal
+		formatString: 0.0000
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: longitude
+
+	hierarchy 'Destination Geography'
+
+		level State
+			column: 'Destination State'
+
+		level City
+			column: 'Destination City'
+
+		level Location
+			column: 'Destination Location'
+
+	partition 'Destination Location' = entity
+		mode: directLake
+		source
+			entityName: dim_destination_location
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

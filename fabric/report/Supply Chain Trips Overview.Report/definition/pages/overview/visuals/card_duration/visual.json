@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "card_duration",
+  "position": {
+    "x": 956,
+    "y": 80,
+    "z": 8000,
+    "width": 300,
+    "height": 110,
+    "tabOrder": 8000
+  },
+  "visual": {
+    "visualType": "card",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Trips"
+                    }
+                  },
+                  "Property": "Average Trip Duration (hours)"
+                }
+              },
+              "queryRef": "Trips.Average Trip Duration (hours)",
+              "nativeQueryRef": "Average Trip Duration (hours)"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

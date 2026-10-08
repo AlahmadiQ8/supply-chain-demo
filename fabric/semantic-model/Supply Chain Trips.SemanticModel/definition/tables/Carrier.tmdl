@@ -1,0 +1,28 @@
+/// Transport supplier (carrier / fleet operator) that executed the trip. Source field: supplierNameCode. Unknown member key -1.
+table Carrier
+
+	column 'Carrier Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: supplier_key
+
+	/// Carrier (supplier) code in the source system.
+	column 'Carrier ID'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: supplier_id
+
+	/// Carrier (transport supplier) name.
+	column Carrier
+		dataType: string
+		summarizeBy: none
+		sourceColumn: supplier_name
+
+	partition Carrier = entity
+		mode: directLake
+		source
+			entityName: dim_supplier
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

@@ -1,0 +1,258 @@
+/// Fact table: one row per delivery truck booking (trip). Source: lh_gold.dbo.fact_trip.
+table Trips
+
+	/// Number of trips (bookings). Dated by trip start unless another date relationship is activated.
+	measure Trips = COUNTROWS ( Trips )
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Trips with a recorded trip end date.
+	measure 'Completed Trips' = SUM ( Trips[Is Completed] )
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Trips with no recorded trip end date in the source (still open or end never captured).
+	measure 'Open Trips' = [Trips] - [Completed Trips]
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Trips counted by the date they were booked rather than the trip start date.
+	measure 'Trips by Booking Date' = ```
+			CALCULATE (
+				[Trips],
+				USERELATIONSHIP ( Trips[Booking Date Key], 'Date'[Date Key] )
+			)
+			```
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Completed trips counted by the date the trip ended.
+	measure 'Completed Trips by End Date' = ```
+			CALCULATE (
+				[Completed Trips],
+				USERELATIONSHIP ( Trips[Trip End Date Key], 'Date'[Date Key] )
+			)
+			```
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Trips in the previous month (by trip start date).
+	measure 'Trips Previous Month' = CALCULATE ( [Trips], DATEADD ( 'Date'[Date], -1, MONTH ) )
+		formatString: #,##0
+		displayFolder: Volume\Time Intelligence
+
+	/// Month-over-month change in trips. Blank when the previous month has no trips.
+	measure 'Trips MoM %' = ```
+			VAR _previous = [Trips Previous Month]
+			RETURN
+				DIVIDE ( [Trips] - _previous, _previous )
+			```
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Volume\Time Intelligence
+
+	/// Year-to-date trips (by trip start date).
+	measure 'Trips YTD' = TOTALYTD ( [Trips], 'Date'[Date] )
+		formatString: #,##0
+		displayFolder: Volume\Time Intelligence
+
+	/// Trips flagged on time by the GPS tracking source (ontime = G).
+	measure 'On-Time Trips' = SUM ( Trips[Is On Time] )
+		formatString: #,##0
+		displayFolder: Delivery Performance
+
+	/// Trips flagged delayed by the GPS tracking source (delay = R).
+	measure 'Delayed Trips' = SUM ( Trips[Is Delayed] )
+		formatString: #,##0
+		displayFolder: Delivery Performance
+
+	/// Share of rated trips delivered on time: On-Time Trips / (On-Time Trips + Delayed Trips). Trips with no status are excluded.
+	measure 'On-Time %' = DIVIDE ( [On-Time Trips], [On-Time Trips] + [Delayed Trips] )
+		formatString: 0.0%
+		displayFolder: Delivery Performance
+
+	/// Share of rated trips that were delayed: Delayed Trips / (On-Time Trips + Delayed Trips).
+	measure 'Delayed %' = DIVIDE ( [Delayed Trips], [On-Time Trips] + [Delayed Trips] )
+		formatString: 0.0%
+		displayFolder: Delivery Performance
+
+	/// Total planned transportation distance in kilometres.
+	measure 'Total Distance (km)' = SUM ( Trips[Distance (km)] )
+		formatString: #,##0
+		displayFolder: Distance & Time
+
+	/// Average planned distance per trip in kilometres (trips with a known distance only).
+	measure 'Average Distance (km)' = AVERAGE ( Trips[Distance (km)] )
+		formatString: #,##0.0
+		displayFolder: Distance & Time
+
+	/// Average hours from trip start to trip end. Trips whose end is before their start are excluded.
+	measure 'Average Trip Duration (hours)' = AVERAGE ( Trips[Trip Duration (hours)] )
+		formatString: #,##0.0
+		displayFolder: Distance & Time
+
+	/// Average hours from trip start to the actual arrival (ETA) reported by tracking.
+	measure 'Average Transit Time (hours)' = AVERAGE ( Trips[Transit Time (hours)] )
+		formatString: #,##0.0
+		displayFolder: Distance & Time
+
+	/// Distinct vehicles that ran at least one trip (excludes trips with an unknown vehicle).
+	measure 'Active Vehicles' = CALCULATE ( DISTINCTCOUNT ( Trips[Vehicle Key] ), Trips[Vehicle Key] <> -1 )
+		formatString: #,##0
+		displayFolder: Fleet & Partners
+
+	/// Average trips per active vehicle; a fleet utilisation indicator.
+	measure 'Trips per Vehicle' = DIVIDE ( [Trips], [Active Vehicles] )
+		formatString: #,##0.0
+		displayFolder: Fleet & Partners
+
+	/// Distinct customers with at least one trip.
+	measure 'Active Customers' = CALCULATE ( DISTINCTCOUNT ( Trips[Customer Key] ), Trips[Customer Key] <> -1 )
+		formatString: #,##0
+		displayFolder: Fleet & Partners
+
+	/// Distinct carriers (transport suppliers) that operated at least one trip.
+	measure 'Active Carriers' = CALCULATE ( DISTINCTCOUNT ( Trips[Carrier Key] ), Trips[Carrier Key] <> -1 )
+		formatString: #,##0
+		displayFolder: Fleet & Partners
+
+	/// Booking reference from the source system (degenerate dimension).
+	column 'Booking ID'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: booking_id
+
+	column 'Trip Start Date Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: trip_start_date_key
+
+	column 'Booking Date Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: booking_date_key
+
+	column 'Trip End Date Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: trip_end_date_key
+
+	column 'Origin Location Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: origin_location_key
+
+	column 'Destination Location Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: destination_location_key
+
+	column 'Vehicle Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: vehicle_key
+
+	column 'Vehicle Type Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: vehicle_type_key
+
+	column 'Customer Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: customer_key
+
+	column 'Carrier Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: supplier_key
+
+	column 'Driver Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: driver_key
+
+	column 'Material Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: material_key
+
+	column 'Trip Details Key'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: trip_attributes_key
+
+	column 'Distance (km)'
+		dataType: decimal
+		isHidden
+		isAvailableInMdx: false
+		formatString: #,##0.00
+		summarizeBy: none
+		sourceColumn: distance_km
+
+	column 'Trip Duration (hours)'
+		dataType: decimal
+		isHidden
+		isAvailableInMdx: false
+		formatString: #,##0.00
+		summarizeBy: none
+		sourceColumn: trip_duration_hours
+
+	column 'Transit Time (hours)'
+		dataType: decimal
+		isHidden
+		isAvailableInMdx: false
+		formatString: #,##0.00
+		summarizeBy: none
+		sourceColumn: transit_hours
+
+	column 'Is On Time'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_on_time
+
+	column 'Is Delayed'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_delayed
+
+	column 'Is Completed'
+		dataType: int64
+		isHidden
+		isAvailableInMdx: false
+		summarizeBy: none
+		sourceColumn: is_completed
+
+	partition Trips = entity
+		mode: directLake
+		source
+			entityName: fact_trip
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

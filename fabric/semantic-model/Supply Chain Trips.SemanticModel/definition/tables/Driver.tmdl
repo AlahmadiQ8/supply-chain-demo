@@ -1,0 +1,22 @@
+/// Driver assigned to the trip. Missing in about half the source rows (Unknown, key -1). Phone numbers are excluded as personal data.
+table Driver
+
+	column 'Driver Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: driver_key
+
+	/// Driver name as recorded.
+	column Driver
+		dataType: string
+		summarizeBy: none
+		sourceColumn: driver_name
+
+	partition Driver = entity
+		mode: directLake
+		source
+			entityName: dim_driver
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

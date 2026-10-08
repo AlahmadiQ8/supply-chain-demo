@@ -1,0 +1,35 @@
+/// Truck that ran the trip, identified by registration plate. Unknown member key -1.
+table Vehicle
+
+	column 'Vehicle Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: vehicle_key
+
+	/// Vehicle registration number (normalised, no spaces or punctuation).
+	column 'Vehicle Number'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: vehicle_no
+
+	/// Two-letter Indian RTO state code from the plate prefix.
+	column 'Registration State Code'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: registration_state_code
+
+	/// State the vehicle is registered in, derived from the plate prefix.
+	column 'Registration State'
+		dataType: string
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: registration_state
+
+	partition Vehicle = entity
+		mode: directLake
+		source
+			entityName: dim_vehicle
+			schemaName: dbo
+			expressionSource: 'DirectLake - Gold'

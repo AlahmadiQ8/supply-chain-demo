@@ -1,0 +1,120 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
+  "name": "table_carriers",
+  "position": {
+    "x": 850,
+    "y": 465,
+    "z": 13000,
+    "width": 410,
+    "height": 240,
+    "tabOrder": 13000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Carrier"
+                    }
+                  },
+                  "Property": "Carrier"
+                }
+              },
+              "queryRef": "Carrier.Carrier",
+              "nativeQueryRef": "Carrier"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Trips"
+                    }
+                  },
+                  "Property": "Trips"
+                }
+              },
+              "queryRef": "Trips.Trips",
+              "nativeQueryRef": "Trips"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Trips"
+                    }
+                  },
+                  "Property": "On-Time %"
+                }
+              },
+              "queryRef": "Trips.On-Time %",
+              "nativeQueryRef": "On-Time %"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Trips"
+                    }
+                  },
+                  "Property": "Average Distance (km)"
+                }
+              },
+              "queryRef": "Trips.Average Distance (km)",
+              "nativeQueryRef": "Average Distance (km)"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Trips"
+                  }
+                },
+                "Property": "Trips"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Carrier performance'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
