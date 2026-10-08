@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.0.0/schema.json",
-  "name": "card_duration",
+  "name": "card_lead_time",
   "position": {
     "x": 956,
     "y": 80,
@@ -24,11 +24,11 @@
                       "Entity": "Trips"
                     }
                   },
-                  "Property": "Average Trip Duration (hours)"
+                  "Property": "Average Lead Time (days)"
                 }
               },
-              "queryRef": "Trips.Average Trip Duration (hours)",
-              "nativeQueryRef": "Average Trip Duration (hours)"
+              "queryRef": "Trips.Average Lead Time (days)",
+              "nativeQueryRef": "Average Lead Time (days)"
             }
           ]
         }

@@ -6,7 +6,7 @@ Authentication uses the Azure CLI (`az login`), no extra Python packages needed.
 
     python scripts/deploy.py --workspace supply-chain-demo            # deploy everything
     python scripts/deploy.py --workspace supply-chain-demo --run      # deploy + run the pipeline
-    python scripts/deploy.py --only notebooks --run-notebooks nb_01_bronze_ingest
+    python scripts/deploy.py --only notebooks --run-notebooks nb_02_silver_transform
 """
 from __future__ import annotations
 
@@ -27,7 +27,6 @@ EXTRA_HEADERS = {"x-ms-fabric-skill": "e2e-medallion-architecture"}
 
 BRONZE_LH, SILVER_LH, GOLD_LH = "lh_bronze", "lh_silver", "lh_gold"
 NOTEBOOKS = [  # (display name, default lakehouse)
-    ("nb_01_bronze_ingest", BRONZE_LH),
     ("nb_02_silver_transform", SILVER_LH),
     ("nb_03_gold_star_schema", GOLD_LH),
     ("nb_04_refresh_semantic_model", GOLD_LH),
@@ -195,7 +194,7 @@ def folder_parts(folder: pathlib.Path, replacements: dict[str, str]) -> list[dic
 def deploy_lakehouses(ctx: dict) -> None:
     log("Lakehouses")
     if not find_item(ctx["ws"], "Lakehouse", BRONZE_LH):
-        raise SystemExit(f"{BRONZE_LH} must exist and contain Files/raw_data/*.xlsx (see README)")
+        raise SystemExit(f"{BRONZE_LH} must exist with the dbo.raw_data table shortcut (see README)")
     for name in (BRONZE_LH, SILVER_LH, GOLD_LH):
         ctx["lakehouses"][name] = ensure_lakehouse(ctx["ws"], name)
 

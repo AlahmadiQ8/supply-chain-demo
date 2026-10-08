@@ -1,7 +1,7 @@
 /// Fact table: one row per delivery truck booking (trip). Source: lh_gold.dbo.fact_trip.
 table Trips
 
-	/// Number of trips (bookings). Dated by trip start unless another date relationship is activated.
+	/// Number of trips (bookings). Dated by booking date; use [Completed Trips by End Date] to date by trip end.
 	measure Trips = COUNTROWS ( Trips )
 		formatString: #,##0
 		displayFolder: Volume
@@ -16,16 +16,6 @@ table Trips
 		formatString: #,##0
 		displayFolder: Volume
 
-	/// Trips counted by the date they were booked rather than the trip start date.
-	measure 'Trips by Booking Date' = ```
-			CALCULATE (
-				[Trips],
-				USERELATIONSHIP ( Trips[Booking Date Key], 'Date'[Date Key] )
-			)
-			```
-		formatString: #,##0
-		displayFolder: Volume
-
 	/// Completed trips counted by the date the trip ended.
 	measure 'Completed Trips by End Date' = ```
 			CALCULATE (
@@ -36,7 +26,7 @@ table Trips
 		formatString: #,##0
 		displayFolder: Volume
 
-	/// Trips in the previous month (by trip start date).
+	/// Trips in the previous month (by booking date).
 	measure 'Trips Previous Month' = CALCULATE ( [Trips], DATEADD ( 'Date'[Date], -1, MONTH ) )
 		formatString: #,##0
 		displayFolder: Volume\Time Intelligence
@@ -50,7 +40,7 @@ table Trips
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: Volume\Time Intelligence
 
-	/// Year-to-date trips (by trip start date).
+	/// Year-to-date trips (by booking date).
 	measure 'Trips YTD' = TOTALYTD ( [Trips], 'Date'[Date] )
 		formatString: #,##0
 		displayFolder: Volume\Time Intelligence
@@ -85,13 +75,8 @@ table Trips
 		formatString: #,##0.0
 		displayFolder: Distance & Time
 
-	/// Average hours from trip start to trip end. Trips whose end is before their start are excluded.
-	measure 'Average Trip Duration (hours)' = AVERAGE ( Trips[Trip Duration (hours)] )
-		formatString: #,##0.0
-		displayFolder: Distance & Time
-
-	/// Average hours from trip start to the actual arrival (ETA) reported by tracking.
-	measure 'Average Transit Time (hours)' = AVERAGE ( Trips[Transit Time (hours)] )
+	/// Average days from booking to trip end (delivery lead time). Trips that ended before their booking date are excluded.
+	measure 'Average Lead Time (days)' = AVERAGE ( Trips[Lead Time (days)] )
 		formatString: #,##0.0
 		displayFolder: Distance & Time
 
@@ -120,13 +105,6 @@ table Trips
 		dataType: string
 		summarizeBy: none
 		sourceColumn: booking_id
-
-	column 'Trip Start Date Key'
-		dataType: int64
-		isHidden
-		isAvailableInMdx: false
-		summarizeBy: none
-		sourceColumn: trip_start_date_key
 
 	column 'Booking Date Key'
 		dataType: int64
@@ -213,21 +191,13 @@ table Trips
 		summarizeBy: none
 		sourceColumn: distance_km
 
-	column 'Trip Duration (hours)'
+	column 'Lead Time (days)'
 		dataType: decimal
 		isHidden
 		isAvailableInMdx: false
 		formatString: #,##0.00
 		summarizeBy: none
-		sourceColumn: trip_duration_hours
-
-	column 'Transit Time (hours)'
-		dataType: decimal
-		isHidden
-		isAvailableInMdx: false
-		formatString: #,##0.00
-		summarizeBy: none
-		sourceColumn: transit_hours
+		sourceColumn: lead_time_days
 
 	column 'Is On Time'
 		dataType: int64

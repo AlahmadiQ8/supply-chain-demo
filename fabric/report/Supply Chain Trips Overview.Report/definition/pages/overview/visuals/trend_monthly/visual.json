@@ -84,7 +84,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Trips by month (trip start)'"
+                  "Value": "'Trips by month (booking date)'"
                 }
               }
             }

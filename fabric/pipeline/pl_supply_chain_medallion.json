@@ -1,34 +1,11 @@
 {
   "properties": {
-    "description": "Supply chain medallion: Bronze ingest -> Silver cleanse -> Gold star schema -> Direct Lake semantic model refresh.",
+    "description": "Supply chain medallion: Bronze (lh_bronze.dbo.raw_data table shortcut) -> Silver cleanse -> Gold star schema -> Direct Lake semantic model refresh.",
     "activities": [
-      {
-        "name": "Bronze - ingest raw trips",
-        "type": "TridentNotebook",
-        "dependsOn": [],
-        "policy": {
-          "timeout": "0.01:00:00",
-          "retry": 1,
-          "retryIntervalInSeconds": 60,
-          "secureOutput": false,
-          "secureInput": false
-        },
-        "typeProperties": {
-          "notebookId": "{{nb_01_bronze_ingest}}",
-          "workspaceId": "{{WORKSPACE_ID}}"
-        }
-      },
       {
         "name": "Silver - clean and conform",
         "type": "TridentNotebook",
-        "dependsOn": [
-          {
-            "activity": "Bronze - ingest raw trips",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ],
+        "dependsOn": [],
         "policy": {
           "timeout": "0.01:00:00",
           "retry": 1,

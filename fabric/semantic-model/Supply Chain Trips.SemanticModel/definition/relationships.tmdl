@@ -1,9 +1,4 @@
-relationship 'Trips to Date (Trip Start)'
-	fromColumn: Trips.'Trip Start Date Key'
-	toColumn: Date.'Date Key'
-
 relationship 'Trips to Date (Booking)'
-	isActive: false
 	fromColumn: Trips.'Booking Date Key'
 	toColumn: Date.'Date Key'
 

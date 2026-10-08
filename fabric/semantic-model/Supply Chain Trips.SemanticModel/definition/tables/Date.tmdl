@@ -1,4 +1,4 @@
-/// Calendar dimension (one row per day, contiguous full years). Role-plays trip start (active), booking and trip end dates.
+/// Calendar dimension (one row per day, contiguous full years). Role-plays booking date (active) and trip end date (inactive).
 table Date
 	dataCategory: Time
 
